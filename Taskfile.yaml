@@ -1,0 +1,39 @@
+# https://taskfile.dev
+
+version: "3"
+
+vars:
+  GREETING: Hello, World!
+
+tasks:
+  default:
+    deps:
+      - build
+
+  dev:
+    deps:
+      - go.build.debug
+    cmds:
+      - ./tmp/main
+    sources:
+      - "**/*.go"
+      - "**/*.ts"
+      - "**/*.tsx"
+      - "**/*.css"
+
+  go.build.debug:
+    deps:
+      - web.build.debug
+    cmds:
+      - go build -o ./tmp/main
+
+  web.build.debug:
+    dir: web
+    cmds:
+      - yarn build
+
+  go.build.prod:
+    cmds:
+      - mkdir -p dist/bin
+      - cd web && yarn build
+      - go build -ldflags '-s -w' -o dist/bin/react-app
